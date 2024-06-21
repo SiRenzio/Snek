@@ -23,6 +23,7 @@ var foodY;
 var directionChanged = false;
 var gameState = "start";
 var displayFood = true;
+var score = 0;
 
 window.onload = function(){
     board = document.getElementById("gameBoard");
@@ -68,6 +69,8 @@ function update(){
     if(snakeX == foodX && snakeY == foodY){
         snakeBody.push([foodX, foodY]);
         placeFood();
+        score += 1;
+        document.getElementById("scoreContainer").innerText = "Score: " + score;
     }
 
     for (let i = snakeBody.length-1; i > 0; i--){
@@ -157,6 +160,8 @@ function reStart(){
         snakeY = squareSize * 1;
         gameState = "start";
         displayFood = false;
+        score = 0;
+        document.getElementById("scoreContainer").innerText = "Score: " + score;
         document.getElementById("gameOverContainer").style.display = "none";
         board.classList.remove("blurred");
     }

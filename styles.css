@@ -47,3 +47,11 @@ body{
     font-size: 32px;
     color: black;
 }
+
+#scoreContainer{
+    position: absolute;
+    top: 50px;
+    right: 31%;
+    font-size: 24px;
+    font-weight: bold;
+}
