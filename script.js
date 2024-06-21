@@ -1,7 +1,7 @@
 
 var squareSize = 20;
 var row = 20;
-var col = 20;
+var col = 25;
 var board;
 var context;
 
@@ -21,7 +21,8 @@ var foodX;
 var foodY;
 
 var directionChanged = false;
-var gameState;
+var gameState = "start";
+var displayFood = true;
 
 window.onload = function(){
     board = document.getElementById("gameBoard");
@@ -29,20 +30,18 @@ window.onload = function(){
     board.width = col * squareSize;
     context = board.getContext("2d")
 
-    placeFood();
     document.addEventListener("keyup", changeDirection);
 
     setInterval(update, 1000/10);
 }
 
 function update(){
-    if(gameState == "gameover"){
-        document.getElementById("gameoverContainer").style.display = "block";
-        board.classList.add("blurred");
-        return;
+    if(gameState == "start"){
+        document.getElementById("gameStartContainer").style.display = "block";
     }
 
-    if(snakeX < 0 || snakeX > col * squareSize || snakeY < 0 || snakeY > row * squareSize){
+    if(snakeX + velocityX * squareSize < 0 || snakeX + velocityX * squareSize >= col * squareSize || 
+       snakeY + velocityY * squareSize < 0 || snakeY + velocityY * squareSize >= row * squareSize){
         gameState = "gameover";
     }
 
@@ -51,11 +50,20 @@ function update(){
             gameState = "gameover";
         }
     }
+
+    if(gameState == "gameover"){
+        document.getElementById("gameOverContainer").style.display = "block";
+        board.classList.add("blurred");
+        return;
+    }
+
     context.fillStyle="lime";
     context.fillRect(0, 0, board.width, board.height);
 
-    context.fillStyle="blue";
-    context.fillRect(foodX, foodY, squareSize, squareSize);
+    if(displayFood){
+        context.fillStyle="blue";
+        context.fillRect(foodX, foodY, squareSize, squareSize);
+    }
 
     if(snakeX == foodX && snakeY == foodY){
         snakeBody.push([foodX, foodY]);
@@ -73,6 +81,7 @@ function update(){
     snakeX += velocityX * squareSize;
     snakeY += velocityY * squareSize;
     context.fillRect(snakeX, snakeY, squareSize, squareSize);
+    
     for (let i = 0; i < snakeBody.length; i++){
         context.fillRect(snakeBody[i][0], snakeBody[i][1], squareSize, squareSize);
     }
@@ -85,6 +94,18 @@ function changeDirection(e){
         gameState = "restart";
         reStart();
     }
+
+    if(gameState == "start"){
+        if(e.code == "KeyW" || e.code == "KeyA" || e.code == "KeyS" || e.code == "KeyD"){
+            document.getElementById("gameStartContainer").style.display = "none";
+            gameState = null;
+            displayFood = true;
+            if(gameState == null){
+                placeFood();
+            }
+        }
+    }
+
     if(!directionChanged){
         if(e.code == "KeyW" && velocityY != 1){
             velocityX = 0;
@@ -134,8 +155,9 @@ function reStart(){
         velocityY = 0;
         snakeX = squareSize * 1;
         snakeY = squareSize * 1;
-        document.getElementById("gameoverContainer").style.display = "none";
+        gameState = "start";
+        displayFood = false;
+        document.getElementById("gameOverContainer").style.display = "none";
         board.classList.remove("blurred");
-        placeFood();
     }
 }
